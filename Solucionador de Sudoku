@@ -1,0 +1,22 @@
+while(verifica_quadrante == 1 || verifica_linha == 1 || verifica_coluna == 1) {
+    numero_posicao++;
+
+    if(numero_posicao > 8) {
+        for(int hey = linha_inicio; hey <= linha_final; hey++) {
+            for(int how = coluna_inicio; how <= coluna_final; how++) {
+                jogo_tabuleiro[hey][how] = 0;
+            }
+        }
+
+        numero_posicao = 0; // setando posição inicial (para não pegar lixo)
+
+//      l_i = linha_inicio;
+//      c_i = coluna_inicio;
+    }
+
+    verifica_quadrante = func_quadrante(numeros_quadrante, nums[numero_posicao]);
+    verifica_linha = func_linha(l_i, nums[numero_posicao]);
+    verifica_coluna = func_coluna(c_i, nums[numero_posicao]);
+
+    numero_novo = numero_posicao;
+}

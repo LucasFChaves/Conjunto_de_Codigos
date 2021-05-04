@@ -1,0 +1,182 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Variáveis globais
+int jogo_tabuleiro[9][9] = {0};
+
+int func_quadrante(int quadrante, int numero) {
+    int linha_inicio, linha_final, coluna_inicio, coluna_final;
+
+    if(quadrante >= 0 && quadrante <= 2) {
+        linha_inicio = 0;
+    } else if(quadrante >= 3 && quadrante <= 5) {
+        linha_inicio = 3;
+    } else {
+        linha_inicio = 6;
+    }
+
+    if(quadrante == 0 || quadrante == 3 || quadrante == 6) {
+        coluna_inicio = 0;
+    } else if(quadrante == 1 || quadrante == 4 || quadrante == 7) {
+        coluna_inicio = 3;
+    } else {
+        coluna_inicio = 6;
+    }
+
+    linha_final = linha_inicio + 2;
+    coluna_final = coluna_inicio + 2;
+
+    for(int l_i = linha_inicio; l_i <= linha_final; l_i++) {
+        for(int c_i = coluna_inicio; c_i <= coluna_final; c_i++) {
+            if(jogo_tabuleiro[l_i][c_i] == numero) {
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int func_linha(int linha, int numero) {
+    for(int c = 0; c < 9; c++) {
+        if(jogo_tabuleiro[linha][c] == numero) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int func_coluna(int coluna, int numero) {
+    for(int l = 0; l < 9; l++) {
+        if(jogo_tabuleiro[l][coluna] == numero) {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+// função para ordenar os itens do vetor de maneia aleatória
+void permutacaoAleatoria(int v[]) {
+    int randomico, auxiliar;
+
+    for (int k = 8; k > 0; k--) {
+        randomico = rand() % 8 + 0;
+
+        auxiliar = v[k];
+
+        v[k] = v[randomico];
+        v[randomico] = auxiliar;
+    }
+}
+
+void func_numeros() {
+    // Preenchendo todo o tabuleiro (quadrante por quadrante)
+    for(int numeros_quadrante = 0; numeros_quadrante < 9; numeros_quadrante++) {
+        int linha_inicio, coluna_inicio, linha_final, coluna_final;
+        int numero_novo;
+
+        if(numeros_quadrante >= 0 && numeros_quadrante <= 2) {
+            linha_inicio = 0;
+        } else if(numeros_quadrante >= 3 && numeros_quadrante <= 5) {
+            linha_inicio = 3;
+        } else {
+            linha_inicio = 6;
+        }
+
+        if(numeros_quadrante == 0 || numeros_quadrante == 3 || numeros_quadrante == 6) {
+            coluna_inicio = 0;
+        } else if(numeros_quadrante == 1 || numeros_quadrante == 4 || numeros_quadrante == 7) {
+            coluna_inicio = 3;
+        } else {
+            coluna_inicio = 6;
+        }
+
+        linha_final = linha_inicio + 2;
+        coluna_final = coluna_inicio + 2;
+
+        int nums[9] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+        permutacaoAleatoria(nums);
+
+        for(int l_i = linha_inicio; l_i <= linha_final; l_i++) {
+            for(int c_i = coluna_inicio; c_i <= coluna_final; c_i++) {
+                int verifica_quadrante = 1;
+                int verifica_linha = 1;
+                int verifica_coluna = 1;
+
+                int numero_novo;
+                int numero_posicao = -1;
+
+                while(verifica_quadrante == 1 || verifica_linha == 1 || verifica_coluna == 1) {
+                    numero_posicao++;
+
+                    if(numero_posicao > 8) {
+                        for(int hey = linha_inicio; hey <= linha_final; hey++) {
+                            for(int how = coluna_inicio; how <= coluna_final; how++) {
+                                jogo_tabuleiro[hey][how] = 0;
+                            }
+                        }
+
+                        numero_posicao = 0;
+
+//                      l_i = linha_inicio;
+//                      c_i = coluna_inicio;
+                    }
+
+                    verifica_quadrante = func_quadrante(numeros_quadrante, nums[numero_posicao]);
+                    verifica_linha = func_linha(l_i, nums[numero_posicao]);
+                    verifica_coluna = func_coluna(c_i, nums[numero_posicao]);
+
+                    numero_novo = numero_posicao;
+                }
+
+                jogo_tabuleiro[l_i][c_i] = nums[numero_novo];
+            }
+        }   
+    }
+}
+
+void func_tabuleiro() {
+    func_numeros();
+
+    printf("|=================================|\n| - | 1  2  3 | 4  5  6 | 7  8  9 |\n|=================================|\n");
+
+    for(int linha = 0; linha < 9; linha++) {
+        if(linha == 3 || linha == 6) {
+            printf("|   |---------+---------+---------|\n");
+        }
+
+        for(int coluna = 0; coluna < 9; coluna++) {
+            if(coluna == 0) {
+                printf("| %d |", linha + 1);
+            }
+
+            if(jogo_tabuleiro[linha][coluna] == 0) {
+                printf("   ");
+            } else {
+                printf(" %d ", jogo_tabuleiro[linha][coluna]);
+            }
+
+            if(coluna == 2 || coluna == 5) {
+                printf("|");
+            }
+
+            if(coluna == 8)  {
+                printf("|\n");
+            }
+        }
+
+        if(linha == 8) {
+            printf("|=================================|\n");
+        }
+    }
+}
+
+main() {
+    srand(time(NULL)); // Inicializando função rand
+
+    func_tabuleiro();
+}
